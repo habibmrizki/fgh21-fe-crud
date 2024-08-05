@@ -111,7 +111,7 @@ function Create() {
     }),
 
     //bagian handle submission
-    onSubmit: async (values, { setSubmitting }) => {
+    onSubmit: async (values) => {
       const newData = new URLSearchParams();
       newData.append("fullname", values.fullname);
       newData.append("email", values.email);
@@ -127,8 +127,6 @@ function Create() {
       console.log(json);
       window.alert("Create user success!");
       navigate("/");
-
-      setSubmitting(false);
     },
   });
 
@@ -186,7 +184,6 @@ function Create() {
           <button
             type="submit"
             className="border outline-none h-12 bg-orange-600 text-white font-bold rounded-2xl"
-            disabled={formik.isSubmitting}
           >
             Submit
           </button>
