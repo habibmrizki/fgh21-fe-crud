@@ -52,6 +52,8 @@
 // export default Update;
 // import React, { useEffect, useState } from "react";
 // import { Link, useNavigate, useParams } from "react-router-dom";
+// import { useFormik } from "formik";
+// import * as Yup from "yup";
 // import axios from "axios";
 
 // function Update() {
@@ -64,33 +66,49 @@
 //   const { id } = useParams();
 //   const navigate = useNavigate();
 
-//   async function getData() {
-//     const user = await axios.get("http://localhost:8080/users/" + id);
-//     console.log(user);
-//     setData(user.data.result);
+//   const formik = useFormik({
+//     initialValues: {
+//       name: "",
+//       email: "",
+//       password: "",
+//     },
+//     onSubmit: inputs,
+//     validationSchema: Yup.object().shape({
+//       name: Yup.string()
+//         .min(1, "Minimum 1 characters")
+//         .max(50, "Must be 50 characters or less")
+//         .required("Required!"),
+//       email: Yup.string().email("Invalid email address").required("Required!"),
+//       password: Yup.string()
+//         .min(8, "Minimum 8 characters")
+//         .required("Required!"),
+//     }),
+//   });
+//   async function datas() {
+//     const dataHome = await fetch("http://localhost:8080/users" + "/" + id, {});
+//     const listData = await dataHome.json();
+//     setData(listData.result);
+//   }
+//   function inputs(values) {
+//     const formData = new URLSearchParams();
+//     formData.append("fullname", values.fullname);
+//     formData.append("email", values.email);
+//     formData.append("password", values.password);
+//     fetch("http://localhost:8080/users" + "/" + id, {
+//       method: "PATCH",
+//       body: formData,
+//     })
+//       .then((response) => response.json())
+//       .then((data) => {
+//         if (data.success === true) {
+//           navigate("/");
+//         }
+//       });
 //   }
 
 //   useEffect(() => {
-//     getData();
+//     datas();
 //   }, []);
-//   console.log(data);
-//   async function createData(e) {
-//     e.preventDefault();
-//     const fullName = e.target.fullname.value;
-//     const email = e.target.email.value;
-//     const password = e.target.password.value;
-//     await axios
-//       .patch("http://localhost:8080/users/" + id, {
-//         fullname: fullName,
-//         email: email,
-//         password: password,
-//       })
-//       .then((response) => console.log(response.data))
-//       .catch((error) => console.error(error));
-//     window.alert("Data has been changed");
-//     navigate("/");
-//   }
-
 //   return (
 //     <div className="flex flex-col justify-center items-center gap-8 my-8">
 //       <div className="w-full max-w-[400px]">
@@ -98,7 +116,10 @@
 //           <Link to={"/"}>Back to main menu</Link>
 //         </button>
 //       </div>
-//       <form className="flex flex-col gap-8 min-w-[400px]" onSubmit={createData}>
+//       <form
+//         className="flex flex-col gap-8 min-w-[400px]"
+//         onSubmit={formik.handleSubmit}
+//       >
 //         <div className="flex flex-col gap-4">
 //           <div className="flex flex-col gap-2">
 //             <label htmlFor="name">Full Name</label>
@@ -142,8 +163,7 @@
 // export default Update;
 
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
@@ -157,8 +177,9 @@ function Update() {
 
   useEffect(() => {
     async function getData() {
-      const user = await axios.get("http://localhost:8080/users/" + id);
-      setData(user.data.result);
+      const response = await fetch("http://localhost:8080/users/" + id);
+      const result = await response.json();
+      setData(result.result);
     }
     getData();
   }, [id]);
@@ -169,21 +190,34 @@ function Update() {
       email: data.email,
       password: "",
     },
-
-    validationSchema: Yup.object({
-      fullname: Yup.string().required("Full Name is required"),
-      email: Yup.string()
-        .email("Invalid email address")
-        .required("Email is required"),
-      password: Yup.string().required("Password is required"),
+    validationSchema: Yup.object().shape({
+      fullname: Yup.string()
+        .min(1, "Minimum 1 karakter")
+        .max(50, "Maksimal 50 karakter")
+        .required("Dibutuhkan!"),
+      email: Yup.string().email("Email tidak valid").required("Dibutuhkan!"),
+      password: Yup.string()
+        .min(8, "Minimum 8 karakter")
+        .required("Dibutuhkan!"),
     }),
     onSubmit: async (values) => {
+      const formData = new URLSearchParams();
+      formData.append("fullname", values.fullname);
+      formData.append("email", values.email);
+      formData.append("password", values.password);
       try {
-        await axios.patch("http://localhost:8080/users/" + id, values);
-        window.alert("Data has been changed");
-        navigate("/");
+        const response = await fetch("http://localhost:8080/users/" + id, {
+          method: "PATCH",
+          body: formData,
+        });
+        const data = await response.json();
+        if (data.success) {
+          navigate("/");
+        } else {
+          window.alert("Gagal memperbarui data");
+        }
       } catch (error) {
-        console.error(error);
+        console.error("Error updating data:", error);
       }
     },
   });
@@ -192,7 +226,7 @@ function Update() {
     <div className="flex flex-col justify-center items-center gap-8 my-8">
       <div className="w-full max-w-[400px]">
         <button className="bg-orange-600 text-white h-16 w-full text-left pl-8 font-semibold rounded-2xl">
-          <Link to={"/"}>Back to main menu</Link>
+          <Link to={"/"}>Kembali ke menu utama</Link>
         </button>
       </div>
       <form
@@ -201,7 +235,7 @@ function Update() {
       >
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <label htmlFor="fullname">Full Name</label>
+            <label htmlFor="fullname">Nama Lengkap</label>
             <input
               className="border border-gray-800 outline-none h-12 rounded-xl pl-4"
               type="text"
@@ -225,7 +259,7 @@ function Update() {
             )}
           </div>
           <div className="flex flex-col gap-2">
-            <label htmlFor="password">Password</label>
+            <label htmlFor="password">Kata Sandi</label>
             <input
               className="border border-gray-800 outline-none h-12 rounded-xl pl-4"
               type="password"
@@ -240,7 +274,7 @@ function Update() {
             className="border outline-none h-12 bg-orange-600 text-white font-bold rounded-2xl"
             type="submit"
           >
-            Submit
+            Kirim
           </button>
         </div>
       </form>
