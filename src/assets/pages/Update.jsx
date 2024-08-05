@@ -169,7 +169,7 @@ function Update() {
       email: data.email,
       password: "",
     },
-    enableReinitialize: true,
+
     validationSchema: Yup.object({
       fullname: Yup.string().required("Full Name is required"),
       email: Yup.string()
