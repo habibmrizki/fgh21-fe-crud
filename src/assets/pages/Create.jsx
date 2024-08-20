@@ -94,14 +94,14 @@ function Create() {
 
   const formik = useFormik({
     initialValues: {
-      fullname: "",
+      username: "",
       email: "",
       password: "",
     },
 
     //bagian validation schema
     validationSchema: Yup.object({
-      fullname: Yup.string()
+      username: Yup.string()
         .max(50, "Must be 50 characters or less")
         .required("Required"),
       email: Yup.string().email("Invalid email address").required("Required"),
@@ -113,11 +113,11 @@ function Create() {
     //bagian handle submission
     onSubmit: async (values) => {
       const newData = new URLSearchParams();
-      newData.append("fullname", values.fullname);
+      newData.append("username", values.username);
       newData.append("email", values.email);
       newData.append("password", values.password);
 
-      const endpoint = "http://localhost:8080/users";
+      const endpoint = "http://localhost:8080/users/";
       const response = await fetch(endpoint, {
         method: "POST",
         body: newData,
@@ -143,16 +143,16 @@ function Create() {
       >
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <label htmlFor="fullname">Full Name</label>
+            <label htmlFor="username">Username</label>
             <input
               className="border border-gray-800 outline-none h-12 rounded-xl pl-4"
               type="text"
-              name="fullname"
-              id="fullname"
-              {...formik.getFieldProps("fullname")}
+              name="username"
+              id="username"
+              {...formik.getFieldProps("username")}
             />
-            {formik.errors.fullname && formik.touched.fullname && (
-              <div className="text-red-600">{formik.errors.fullname}</div>
+            {formik.errors.username && formik.touched.username && (
+              <div className="text-red-600">{formik.errors.username}</div>
             )}
           </div>
           <div className="flex flex-col gap-2">
@@ -164,7 +164,7 @@ function Create() {
               id="email"
               {...formik.getFieldProps("email")}
             />
-            {formik.errors.email && formik.touched.fullname && (
+            {formik.errors.email && formik.touched.email && (
               <div className="text-red-600">{formik.errors.email}</div>
             )}
           </div>
@@ -177,7 +177,7 @@ function Create() {
               id="password"
               {...formik.getFieldProps("password")}
             />
-            {formik.errors.password && formik.touched.fullname && (
+            {formik.errors.password && formik.touched.password && (
               <div className="text-red-600">{formik.errors.password}</div>
             )}
           </div>

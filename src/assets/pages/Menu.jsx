@@ -5,9 +5,9 @@ function Menu() {
   const [table, setTable] = React.useState([]);
 
   async function getData() {
-    const response = await fetch("http://localhost:8080/users");
+    const response = await fetch("http://localhost:8080/users/");
     const data = await response.json();
-    const newData = data.result;
+    const newData = data.results;
     setTable(newData);
   }
 
@@ -40,7 +40,7 @@ function Menu() {
           <thead className="border">
             <tr>
               <th className="border">ID</th>
-              <th className="border">Name</th>
+              <th className="border">Username</th>
               <th className="border">Email</th>
               <th className="border">Options</th>
             </tr>
@@ -49,7 +49,7 @@ function Menu() {
             {table.map((e) => (
               <tr key={e.id}>
                 <td className="border">{e.id}</td>
-                <td className="border">{e.fullname}</td>
+                <td className="border">{e.username}</td>
                 <td className="border">{e.email}</td>
                 <td className="border flex justify-center gap-[20px]">
                   <Link to={"/update/" + e.id}>

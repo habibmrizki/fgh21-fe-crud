@@ -169,7 +169,7 @@ import * as Yup from "yup";
 
 function Update() {
   const [data, setData] = useState({
-    fullname: "",
+    username: "",
     email: "",
   });
   const { id } = useParams();
@@ -179,19 +179,19 @@ function Update() {
     async function getData() {
       const response = await fetch("http://localhost:8080/users/" + id);
       const result = await response.json();
-      setData(result.result);
+      setData(result.results);
     }
     getData();
   }, [id]);
 
   const formik = useFormik({
     initialValues: {
-      fullname: data.fullname,
+      username: data.username,
       email: data.email,
       password: "",
     },
     validationSchema: Yup.object().shape({
-      fullname: Yup.string()
+      username: Yup.string()
         .min(1, "Minimum 1 karakter")
         .max(50, "Maksimal 50 karakter")
         .required("Dibutuhkan!"),
@@ -202,7 +202,7 @@ function Update() {
     }),
     onSubmit: async (values) => {
       const formData = new URLSearchParams();
-      formData.append("fullname", values.fullname);
+      formData.append("username", values.username);
       formData.append("email", values.email);
       formData.append("password", values.password);
       try {
@@ -235,15 +235,15 @@ function Update() {
       >
         <div className="flex flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <label htmlFor="fullname">Nama Lengkap</label>
+            <label htmlFor="username">Username</label>
             <input
               className="border border-gray-800 outline-none h-12 rounded-xl pl-4"
               type="text"
-              id="fullname"
-              {...formik.getFieldProps("fullname")}
+              id="username"
+              {...formik.getFieldProps("username")}
             />
-            {formik.touched.fullname && formik.errors.fullname && (
-              <div className="text-red-600">{formik.errors.fullname}</div>
+            {formik.touched.username && formik.errors.username && (
+              <div className="text-red-600">{formik.errors.username}</div>
             )}
           </div>
           <div className="flex flex-col gap-2">
